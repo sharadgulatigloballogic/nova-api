@@ -39,18 +39,13 @@ public class CareRequestService {
         InsurancePlan primary = patient.getInsurancePlans().get(0);
         InsurancePlanDto planDto = mapper.toPlanDto(primary);
 
-        // BUG (Scenario 1 — backend half): clinical priority is always
-        // hard-coded to ROUTINE. Patient.priority (STAT / URGENT / ROUTINE)
-        // is never read, so STAT/URGENT care requests look routine downstream.
-        // Correct: Priority.fromString(patient.getPriority()).name()
-        // or PatientUtils.clinicalPriority(patient).name()
         return CareRequestResponse.builder()
                 .patientId(patient.getPatientId())
                 .patientName(PatientUtils.fullName(patient))
                 .dateOfBirth(patient.getDateOfBirth())
                 .requestDate(LocalDate.now().toString())
                 .orderingProvider(properties.getDefaultOrderingProvider())
-                .priority("ROUTINE")   // BUG: should be patient.getPriority()
+                .priority(PatientUtils.clinicalPriority(patient).name())
                 .insurancePlan(planDto) // BUG: singular field, only primary
                 .build();
     }
