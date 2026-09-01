@@ -3,6 +3,8 @@ package com.nova.care.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * API contract (documented in openapi.yaml):
  *
@@ -48,6 +50,5 @@ public class CareRequestResponse {
     // Clinical priority: STAT | URGENT | ROUTINE
     private String priority;
 
-    // BUG (Scenario 2): should be `List<InsurancePlanDto> insurancePlans`
-    private InsurancePlanDto insurancePlan;
+    private List<InsurancePlanDto> insurancePlans;
 }

@@ -4,13 +4,13 @@ import com.nova.care.config.NovaCareProperties;
 import com.nova.care.dto.CareRequestResponse;
 import com.nova.care.dto.InsurancePlanDto;
 import com.nova.care.mapper.CareRequestMapper;
-import com.nova.care.model.InsurancePlan;
 import com.nova.care.model.Patient;
 import com.nova.care.repository.PatientRepository;
 import com.nova.care.util.PatientUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class CareRequestService {
@@ -33,11 +33,7 @@ public class CareRequestService {
         Patient patient = patientRepository.findById(patientId).orElse(null);
         if (patient == null) return null;
 
-        // BUG (Scenario 2): only the first plan is mapped into a singular
-        // field `insurancePlan` instead of mapping all plans into
-        // `insurancePlans`. The secondary plan is silently discarded.
-        InsurancePlan primary = patient.getInsurancePlans().get(0);
-        InsurancePlanDto planDto = mapper.toPlanDto(primary);
+        List<InsurancePlanDto> planDtos = mapper.toPlanDtos(patient.getInsurancePlans());
 
         // BUG (Scenario 1 — backend half): clinical priority is always
         // hard-coded to ROUTINE. Patient.priority (STAT / URGENT / ROUTINE)
@@ -51,7 +47,7 @@ public class CareRequestService {
                 .requestDate(LocalDate.now().toString())
                 .orderingProvider(properties.getDefaultOrderingProvider())
                 .priority("ROUTINE")   // BUG: should be patient.getPriority()
-                .insurancePlan(planDto) // BUG: singular field, only primary
+                .insurancePlans(planDtos)
                 .build();
     }
 }
