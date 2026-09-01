@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: nova-api
+
+nova:
+  care:
+    default-ordering-provider: "Dr. Sarah Kim"
+    eligibility:
+      require-secondary-check: true
