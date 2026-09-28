@@ -3,6 +3,8 @@ package com.nova.care.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * API contract (documented in openapi.yaml):
  *
@@ -22,19 +24,6 @@ import lombok.Data;
  *     ]
  *   }
  *
- * CONTRACT BUG (Scenario 2):
- * The field below is declared as a single InsurancePlanDto (singular name,
- * object type) instead of a List<InsurancePlanDto> (plural name, array type).
- * Jackson serialises it as:
- *
- *   "insurancePlan": { ... }        <-- wrong: singular key, object
- *
- * instead of:
- *
- *   "insurancePlans": [ ... ]       <-- correct: plural key, array
- *
- * Fixing this is a breaking response-shape change; Harbor Web (and any other
- * consumer adapted to the singular field) must be updated in lockstep.
  */
 @Data
 @Builder
@@ -48,6 +37,5 @@ public class CareRequestResponse {
     // Clinical priority: STAT | URGENT | ROUTINE
     private String priority;
 
-    // BUG (Scenario 2): should be `List<InsurancePlanDto> insurancePlans`
-    private InsurancePlanDto insurancePlan;
+    private List<InsurancePlanDto> insurancePlans;
 }
